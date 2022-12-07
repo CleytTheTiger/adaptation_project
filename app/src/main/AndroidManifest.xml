@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.adaptationproject">
-
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,6 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AdaptationProject"
         tools:targetApi="31">
+
 
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -27,15 +28,11 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY" />
+            android:value="AIzaSyAenZe39ai1GOZMwpMmeiQJOV8fmGqAnSc" />
 
         <activity
-            android:name=".MapsActivity"
-            android:exported="false"/>
-        <activity
-            android:name=".MainActivity"
+            android:name="com.example.adaptationproject.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.AdaptationProject">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,6 +40,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.adaptationproject.MapsActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AdaptationProject"/>
     </application>
 
 </manifest>

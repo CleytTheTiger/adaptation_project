@@ -1,9 +1,7 @@
 package com.example.adaptationproject
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -20,16 +18,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.startActivity
 import com.example.adaptationproject.ui.theme.*
 
 @Composable
-fun HomeScreen(holderActivity: Context){
+fun HomeScreen(context: Context){
     Box(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        Column() {
+        Column {
             Information(
                 "Иванов Иван Иванович",
                 "Информационные системы и технологии",
@@ -57,7 +54,7 @@ fun HomeScreen(holderActivity: Context){
                         R.mipmap.ic_map_foreground,
                         CustomGreen1,
                     )
-                )
+                ), context
             )
         }
     }
@@ -91,7 +88,7 @@ fun Information(name: String, role: String, work_time: String) {
                     .clip(RoundedCornerShape(10.dp))
                     .background(Color.DarkGray)
             ) {
-                Column() {
+                Column {
                     Text(
                         text = name, color = TextWhite,
                         modifier = Modifier
@@ -115,7 +112,7 @@ fun Information(name: String, role: String, work_time: String) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Menu(menuContent: List<menuItem>, holderActivity: Context){
+fun Menu(menuContent: List<menuItem>, context: Context){
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceAround) {
         Text(text = "Доступные действия",
             modifier = Modifier
@@ -126,14 +123,14 @@ fun Menu(menuContent: List<menuItem>, holderActivity: Context){
             modifier = Modifier.fillMaxHeight()
         ) {
             items(menuContent.size) {
-                MenuItem(item = menuContent[it], holderActivity)
+                MenuItem(item = menuContent[it], context)
             }
         }
     }
 }
 
 @Composable
-fun MenuItem(item: menuItem, holderActivity: Context){
+fun MenuItem(item: menuItem, context: Context){
     Box(modifier = Modifier
         .height(150.dp)
         .fillMaxWidth()
@@ -143,8 +140,7 @@ fun MenuItem(item: menuItem, holderActivity: Context){
         .clickable {
             when(item.title){
                 "Карта" -> {
-                    val intent = Intent(holderActivity, MapsActivity::class.java)
-                    startActivity()
+                    context.startActivity(Intent(context, MapsActivity::class.java))
                 }
             }
         }
