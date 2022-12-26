@@ -30,7 +30,7 @@ class MapsActivity : ComponentActivity() {
             LatLng(57.58453159302147, 39.86252589148445)
         )
         val cameraPosition = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(markerPos[0],25f)
+            position = CameraPosition.fromLatLngZoom(markerPos[0],18f)
         }
         GoogleMap(
             modifier = Modifier.fillMaxSize(),
