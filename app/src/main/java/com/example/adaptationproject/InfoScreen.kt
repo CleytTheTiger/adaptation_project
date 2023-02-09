@@ -67,11 +67,3 @@ fun InfoMenuItem(item: infoMenuItem) {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun InterfacePreview(){
-    AdaptationProjectTheme {
-        InfoScreen()
-    }
-}

@@ -4,6 +4,8 @@ package com.example.adaptationproject
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -14,26 +16,30 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.example.adaptationproject.Constants.BASE_URL
 import com.example.adaptationproject.ui.theme.*
+import org.json.JSONObject
 
-    @Composable
-    fun HomeScreen(context: Context) {
+@Composable
+    fun HomeScreen(context: Context, user_id: String) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
         ) {
+
             Column {
-                Information(
-                    "Иванов Иван Иванович",
-                    "Информационные системы и технологии",
-                    "3 курс"
-                )
+                Information(context, user_id)
                 Menu(
                     listOf(
                         menuItem(
@@ -56,14 +62,61 @@ import com.example.adaptationproject.ui.theme.*
                             R.mipmap.ic_map_foreground,
                             CustomGreen1,
                         )
-                    ), context
+                    ), context, user_id
                 )
             }
         }
     }
 
+    fun getUserData(context: Context, uname:MutableState<String>, udept:MutableState<String>, urole:MutableState<String>, uid : String){
+        val url = BASE_URL + "GetUserData.php"
+        val requestQueue = Volley.newRequestQueue(context)
+        val stringRequest = object : StringRequest(
+            Method.POST, url,
+            {response ->
+                try {
+                    val jsonObject = JSONObject(response)
+                    if (jsonObject.get("response").equals("success")) {
+                        val jsonArray = jsonObject.getJSONArray("data")
+                        Log.d("Success: ", jsonObject.get("response").toString())
+                        for (i in 0 until jsonArray.length()) {
+                            val jo = jsonArray.getJSONObject(i)
+                            val name = jo.getString("name")
+                            val secName = jo.getString("second_name")
+                            val surname = jo.getString("surname")
+                            uname.value = "$secName $name $surname"
+                            udept.value = jo.getString("dept_name")
+                            urole.value = jo.getString("role_name")
+                        }
+                    }}
+                catch (e: java.lang.Exception){
+                    Toast.makeText(context,"Ошибка получения данных!", Toast.LENGTH_SHORT).show()
+                }
+            }, { error ->
+                Log.d("Error: ", error.toString()) }
+        ) {
+            override fun getParams(): HashMap<String,String>{
+                val params = HashMap<String,String>()
+                params["id"] = uid.toString()
+                return params
+            }
+        }
+        requestQueue.add(stringRequest)
+        requestQueue.start()
+    }
+
     @Composable
-    fun Information(name: String, role: String, work_time: String) {
+    fun Information(context: Context, id: String) {
+        val name = remember {
+            mutableStateOf("")
+        }
+        val dept = remember {
+            mutableStateOf("")
+        }
+        val role = remember {
+            mutableStateOf("")
+        }
+        getUserData(context, name, dept, role, id)
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top,
@@ -96,17 +149,17 @@ import com.example.adaptationproject.ui.theme.*
                 ) {
                     Column {
                         Text(
-                            text = name, color = TextWhite,
+                            text = name.value, color = TextWhite,
                             modifier = Modifier
                                 .padding(10.dp)
                         )
                         Text(
-                            text = role, color = TextWhite,
+                            text = "Институт " + dept.value, color = TextWhite,
                             modifier = Modifier
                                 .padding(10.dp)
                         )
                         Text(
-                            text = work_time, color = TextWhite,
+                            text = role.value, color = TextWhite,
                             modifier = Modifier
                                 .padding(10.dp)
                         )
@@ -118,7 +171,7 @@ import com.example.adaptationproject.ui.theme.*
 
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
-    fun Menu(menuContent: List<menuItem>, context: Context) {
+    fun Menu(menuContent: List<menuItem>, context: Context, user_id : String) {
         Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.SpaceAround) {
             Text(
                 text = "Доступные действия",
@@ -131,14 +184,14 @@ import com.example.adaptationproject.ui.theme.*
                 modifier = Modifier.fillMaxHeight()
             ) {
                 items(menuContent.size) {
-                    MenuItem(item = menuContent[it], context)
+                    MenuItem(item = menuContent[it], context, user_id)
                 }
             }
         }
     }
 
     @Composable
-    fun MenuItem(item: menuItem, context: Context) {
+    fun MenuItem(item: menuItem, context: Context, user_id : String) {
         Box(modifier = Modifier
             .height(160.dp)
             .fillMaxWidth()
@@ -148,10 +201,19 @@ import com.example.adaptationproject.ui.theme.*
             .clickable {
                 when (item.title) {
                     "Карта" -> {
-                        context.startActivity(Intent(context, MapsActivity::class.java))
+                        val intent = Intent(context, MapsActivity::class.java)
+                        //intent.putExtra("sql_query", query)
+                        intent.putExtra("id", user_id)
+                        context.startActivity(intent)
                     }
                     "Информация" -> {
                         context.startActivity(Intent(context, InfoActivity::class.java))
+                    }
+                    "Мероприятия" -> {
+                        context.startActivity(Intent(context, EventActivity::class.java))
+                    }
+                    "Тесты и курсы" -> {
+                        context.startActivity(Intent(context, CoursesActivity::class.java))
                     }
                 }
             }
@@ -167,7 +229,7 @@ import com.example.adaptationproject.ui.theme.*
                 contentDescription = item.title,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .size(95.dp)
+                    .size(95.dp, 122.dp)
             )
         }
     }

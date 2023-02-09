@@ -1,6 +1,5 @@
 package com.example.adaptationproject
 
-import android.content.Intent
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
 

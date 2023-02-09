@@ -3,4 +3,6 @@
     <string name="title_activity_login">Авторизация</string>
     <string name="welcome">"Welcome !"</string>
     <string name="title_activity_maps">Карта полезностей</string>
+    <string name="title_activity_event">EventActivity</string>
+    <string name="title_activity_courses">CoursesActivity</string>
 </resources>
