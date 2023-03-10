@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AllAdapt</string>
+    <string name="title_activity_login">Что-то</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="title_activity_maps">Карта полезностей</string>
+    <string name="title_activity_event">EventActivity</string>
+    <string name="title_activity_courses">CoursesActivity</string>
+    <string name="title_activity_events">EventsActivity</string>
+</resources>
